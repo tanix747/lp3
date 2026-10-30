@@ -44,7 +44,7 @@ bool solve(int row) {
 int main() {
     cin >> n;
 
-    board.assign(n, vector<int>(n, 0));
+    vector<vector<int>> board(n, vector<int>(n, 0));
 
     // First queen already placed
     board[0][0] = 1;
