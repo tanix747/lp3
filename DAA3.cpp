@@ -1,31 +1,47 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+int knapsack(int i, int W, vector<int>& wt, vector<int>& val,
+             vector<vector<int>>& dp) {
+
+    if (i == 0 || W == 0)
+        return 0;
+
+    if (dp[i][W] != -1)
+        return dp[i][W];
+
+    if (wt[i - 1] > W)
+        return dp[i][W] = knapsack(i - 1, W, wt, val, dp);
+
+    return dp[i][W] = max(
+        val[i - 1] + knapsack(i - 1, W - wt[i - 1], wt, val, dp),
+        knapsack(i - 1, W, wt, val, dp)
+    );
+}
+
 int main() {
     int n, W;
-    cin >> n >> W;
+
+    cout << "Enter number of items: ";
+    cin >> n;
 
     vector<int> wt(n), val(n);
 
+    cout << "Enter weights: ";
     for (int i = 0; i < n; i++)
-        cin >> wt[i] >> val[i];
+        cin >> wt[i];
 
-    vector<vector<int>> dp(n + 1, vector<int>(W + 1, 0));
+    cout << "Enter values: ";
+    for (int i = 0; i < n; i++)
+        cin >> val[i];
 
-    for (int i = 1; i <= n; i++) {
-        for (int w = 0; w <= W; w++) {
+    cout << "Enter capacity: ";
+    cin >> W;
 
-            if (wt[i - 1] <= w)
-                dp[i][w] = max(
-                    val[i - 1] + dp[i - 1][w - wt[i - 1]],
-                    dp[i - 1][w]
-                );
-            else
-                dp[i][w] = dp[i - 1][w];
-        }
-    }
+    vector<vector<int>> dp(n + 1, vector<int>(W + 1, -1));
 
-    cout << "Maximum Profit = " << dp[n][W];
+    cout << "Maximum value = "
+         << knapsack(n, W, wt, val, dp) << endl;
 
     return 0;
 }
