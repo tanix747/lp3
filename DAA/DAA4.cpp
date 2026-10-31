@@ -31,7 +31,7 @@ bool isSafe(int row, int col) {
 bool solve(int row) {
 
     if (row == n)
-        return true;
+    return true;
 
     for (int col = 0; col < n; col++) {
 

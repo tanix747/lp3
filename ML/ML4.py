@@ -1,36 +1,12 @@
-import pandas as pd
-import matplotlib.pyplot as plt
+def f(x):
+    return (x + 3) ** 2
 
-from sklearn.cluster import KMeans
-from sklearn.preprocessing import StandardScaler
+x = 2
+lr = 0.1
 
-# Load data
-data = pd.read_csv("sales_data_sample.csv")
+for i in range(20):
+    grad = 2 * (x + 3)
+    x = x - lr * grad
 
-# Select numerical columns
-X = data.select_dtypes(include="number").dropna()
-
-# Normalize data
-scaler = StandardScaler()
-X = scaler.fit_transform(X)
-
-# Elbow method
-wcss = []
-
-for k in range(1, 11):
-    model = KMeans(n_clusters=k, random_state=42, n_init=10)
-    model.fit(X)
-    wcss.append(model.inertia_)
-
-plt.plot(range(1, 11), wcss, marker="o")
-plt.xlabel("Number of Clusters")
-plt.ylabel("WCSS")
-plt.title("Elbow Method")
-plt.show()
-
-# Apply K-Means
-model = KMeans(n_clusters=3, random_state=42, n_init=10)
-clusters = model.fit_predict(X)
-
-print("Clusters:")
-print(clusters)
+print("Minimum x =", x)
+print("Minimum y =", f(x))

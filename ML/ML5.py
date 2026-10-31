@@ -1,36 +1,27 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 
-# Load data
-data = pd.read_csv("sales_data_sample.csv")
+data = pd.read_csv("sales_data_sample.csv", encoding="latin-1")
 
-# Select numerical columns
-X = data.select_dtypes(include="number").dropna()
+X = data.select_dtypes("number").dropna()
+X = StandardScaler().fit_transform(X)
 
-# Normalize data
-scaler = StandardScaler()
-X = scaler.fit_transform(X)
-
-# Elbow method
 wcss = []
 
 for k in range(1, 11):
-    model = KMeans(n_clusters=k, random_state=42, n_init=10)
-    model.fit(X)
-    wcss.append(model.inertia_)
+    m = KMeans(n_clusters=k, random_state=42, n_init=10)
+    m.fit(X)
+    wcss.append(m.inertia_)
 
 plt.plot(range(1, 11), wcss, marker="o")
-plt.xlabel("Number of Clusters")
+plt.xlabel("Clusters")
 plt.ylabel("WCSS")
 plt.title("Elbow Method")
 plt.show()
 
-# Apply K-Means
-model = KMeans(n_clusters=3, random_state=42, n_init=10)
-clusters = model.fit_predict(X)
+m = KMeans(n_clusters=3, random_state=42, n_init=10)
+clusters = m.fit_predict(X)
 
-print("Clusters:")
-print(clusters)
+print("Clusters:", clusters)
