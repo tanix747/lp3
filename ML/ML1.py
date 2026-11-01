@@ -7,16 +7,8 @@ mkdir ~/ML
 cd ~/ML
 python3.12 -m venv .venv
 source .venv/bin/activate
-pip install numpy pandas matplotlib seaborn scikit-learn scipy tensorflow nltk
+pip install numpy pandas matplotlib seaborn scikit-learn 
 
-import nltk
-nltk.download('punkt')
-nltk.download('punkt_tab')
-nltk.download('stopwords')
-nltk.download('wordnet')
-nltk.download('omw-1.4')
-nltk.download('averaged_perceptron_tagger')
-nltk.download('averaged_perceptron_tagger_eng')
 """
 
 
@@ -24,56 +16,78 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score, mean_squared_error
 
+
+# 1. Load data
 df = pd.read_csv("uber.csv")
 
-print(df.head())
-print(df.info())
-print(df.isnull().sum())
+# 2. Remove unnecessary columns and missing values
+df = df.drop(columns=["Unnamed: 0", "key"], errors="ignore")
+df = df.dropna()
 
-df = df.drop(columns=["Unnamed: 0", "key"], errors="ignore").dropna()
 
+# 3. Convert date into useful features
 df["pickup_datetime"] = pd.to_datetime(df["pickup_datetime"])
 df["year"] = df["pickup_datetime"].dt.year
 df["month"] = df["pickup_datetime"].dt.month
 df["day"] = df["pickup_datetime"].dt.day
 df["hour"] = df["pickup_datetime"].dt.hour
+
 df = df.drop(columns=["pickup_datetime"])
 
-sns.boxplot(x=df["fare_amount"])
-plt.show()
 
-Q1 = df.fare_amount.quantile(.25)
-Q3 = df.fare_amount.quantile(.75)
+# 4. Identify and remove outliers using IQR
+Q1 = df["fare_amount"].quantile(0.25)
+Q3 = df["fare_amount"].quantile(0.75)
 IQR = Q3 - Q1
 
-df = df[(df.fare_amount >= Q1 - 1.5*IQR) &
-        (df.fare_amount <= Q3 + 1.5*IQR)]
+df = df[
+    (df["fare_amount"] >= Q1 - 1.5 * IQR) &
+    (df["fare_amount"] <= Q3 + 1.5 * IQR)
+]
 
+
+# 5. Check correlation
 sns.heatmap(df.corr(numeric_only=True), annot=True)
 plt.show()
 
+
+# 6. Separate input and output
 X = df.drop(columns=["fare_amount"])
 y = df["fare_amount"]
 
+
+# 7. Split into training and testing data
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=.2, random_state=42)
+    X, y, test_size=0.2, random_state=42
+)
 
+
+# 8. Train Linear Regression
 lr = LinearRegression()
-rf = RandomForestRegressor(n_estimators=100, random_state=42, n_jobs=-1)
-
 lr.fit(X_train, y_train)
+
+
+# 9. Train Random Forest Regression
+rf = RandomForestRegressor(n_estimators=100, random_state=42)
 rf.fit(X_train, y_train)
 
+
+# 10. Make predictions
 p1 = lr.predict(X_test)
 p2 = rf.predict(X_test)
 
-print("Linear Regression:", r2_score(y_test,p1),
-      np.sqrt(mean_squared_error(y_test,p1)))
 
-print("Random Forest:", r2_score(y_test,p2),
-      np.sqrt(mean_squared_error(y_test,p2)))
+# 11. Compare R² and RMSE
+print("Linear Regression")
+print("R2:", r2_score(y_test, p1))
+print("RMSE:", np.sqrt(mean_squared_error(y_test, p1)))
+
+print("\nRandom Forest")
+print("R2:", r2_score(y_test, p2))
+print("RMSE:", np.sqrt(mean_squared_error(y_test, p2)))

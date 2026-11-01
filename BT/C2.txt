@@ -11,24 +11,19 @@ contract StudentData {
 
     Student[] public students;
 
-    function addStudent(
-        uint _id,
-        string memory _name,
-        uint _age
-    ) public {
+    function addStudent(uint _id, string memory _name, uint _age) public 
+    {
         students.push(Student(_id, _name, _age));
     }
 
-    function getStudent(uint index)
-        public
-        view
-        returns (uint, string memory, uint)
+    function getStudent(uint index) public view returns (uint, string memory, uint)
     {
         Student memory s = students[index];
         return (s.id, s.name, s.age);
     }
 
-    function getCount() public view returns (uint) {
+    function getCount() public view returns (uint) 
+    {
         return students.length;
     }
 }

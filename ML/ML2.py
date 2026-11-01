@@ -21,10 +21,11 @@ X_train = tfidf.fit_transform(X_train)
 X_test = tfidf.transform(X_test)
 
 knn = KNeighborsClassifier(n_neighbors=5)
-svm = SVC(kernel="linear")
-
 knn.fit(X_train, y_train)
-svm.fit(X_train, y_train)
+pred = knn.predict(X_test)
+print("KNN Accuracy:", accuracy_score(y_test, pred))
 
-print("KNN Accuracy:", accuracy_score(y_test, knn.predict(X_test)))
-print("SVM Accuracy:", accuracy_score(y_test, svm.predict(X_test)))
+svm = SVC(kernel="linear")
+svm.fit(X_train, y_train)
+pred=svm.predict(X_test)
+print("SVM Accuracy:", accuracy_score(y_test, pred))
