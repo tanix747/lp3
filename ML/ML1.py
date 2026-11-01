@@ -20,7 +20,7 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import r2_score, mean_squared_error
+from sklearn.metrics import r2_score, root_mean_squared_error
 
 
 # 1. Load data
@@ -68,26 +68,14 @@ X_train, X_test, y_train, y_test = train_test_split(
 )
 
 
-# 8. Train Linear Regression
 lr = LinearRegression()
 lr.fit(X_train, y_train)
+pred = lr.predict(X_test)
+print (r2_score(y_test, pred))
+print (root_mean_squared_error(y_test, pred))
 
-
-# 9. Train Random Forest Regression
-rf = RandomForestRegressor(n_estimators=100, random_state=42)
+rf=RandomForestRegressor(n_estimators=100, random_state=42)
 rf.fit(X_train, y_train)
-
-
-# 10. Make predictions
-p1 = lr.predict(X_test)
-p2 = rf.predict(X_test)
-
-
-# 11. Compare R² and RMSE
-print("Linear Regression")
-print("R2:", r2_score(y_test, p1))
-print("RMSE:", np.sqrt(mean_squared_error(y_test, p1)))
-
-print("\nRandom Forest")
-print("R2:", r2_score(y_test, p2))
-print("RMSE:", np.sqrt(mean_squared_error(y_test, p2)))
+pred = rf.predict(X_test)
+print (r2_score(y_test, pred))
+print (root_mean_squared_error(y_test, pred))
