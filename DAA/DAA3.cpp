@@ -1,8 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int knapsack(int i, int W, vector<int>& wt, vector<int>& val,
-             vector<vector<int>>& dp) {
+int knapsack(int i, int W, vector<int>& wt, vector<int>& val, vector<vector<int>>& dp) {
 
     if (i == 0 || W == 0)
         return 0;
